@@ -1,46 +1,53 @@
-import aiosqlite
-import asyncio
 
-async def create_table():
-    # Создаем соединение с базой данных (если она не существует, то она будет создана)
-    async with aiosqlite.connect('quiz_bot.db') as db:
-        # Выполняем SQL-запрос к базе данных
-        await db.execute('''CREATE TABLE IF NOT EXISTS quiz_state (
-            user_id INTEGER PRIMARY KEY,
-            question_index TEXT,
-            options TEXT,
-            correct_option INTEGER
-            )''')
-
-        # Сохраняем изменения
-        await db.commit()
-
-async def update_quiz_index(user_id, index, options, correct_option):
-    # Создаем соединение с базой данных (если она не существует, она будет создана)
-    async with aiosqlite.connect('quiz_bot.db') as db:
-        # Вставляем новую запись или заменяем ее, если с данным user_id уже существует
-        await db.execute('INSERT OR REPLACE INTO quiz_state (user_id, question_index, options, Correct_option) VALUES (?, ?, ?, ?)', (user_id, index, options, correct_option))
-        # Сохраняем изменения
-        await db.commit()
-        
-async def get_quiz_index(user_id):
-     # Подключаемся к базе данных
-     async with aiosqlite.connect('quiz_bot.db') as db:
-        # Получаем запись для заданного пользователя
-        async with db.execute('SELECT question_index, options, correct_option FROM quiz_state WHERE user_id = (?)', (user_id, )) as cursor:
-            results = await cursor.fetchone()
-            if results is not None:
-                return results
-            else:
-                return 0
-
-async def main():
-    #await create_table()
-    #await update_quiz_index(12345, 'Python?','dddd', 0)
-    result = await get_quiz_index(12345)
-    
-    print(result)
-    
-    
-if __name__ == "__main__":
-    asyncio.run(main())
+quiz_data = [
+    {#1
+        'question': 'Какая игра является самой продаваемой в истории?',
+        'options': ['Minecraft', 'Grand Theft Auto V', 'Tetris', 'ЗThe Witcher 3'],
+        'correct_option': 0
+    },
+    {#2
+        'question': 'В какой игре впервые появился «Бэтмен: Аркхэм»?',
+        'options': ['Batman: Arkham Asylum', 'Batman: Arkham City', 'Batman: Arkham Origins', 'Batman: Arkham Knight'],
+        'correct_option': 0
+    },
+    {#3
+        'question': 'Какой персонаж сказал: «Никогда не должен был сюда вернуться»?',
+        'options': ['Артур Морган (Red Dead Redemption 2)', 'Джоэл (The Last of Us)', 'Такер (Red vs. Blue)', 'Вейдер (Star Wars Jedi: Fallen Order)'],
+        'correct_option': 3
+    },
+    {#4
+        'question': 'Какая игра вдохновила создателей «Dark Souls»?',
+        'options': ['The Legend of Zelda', 'Demon’s Souls', 'Castlevania', 'Dragon’s Dogma'],
+        'correct_option': 1
+    },
+    {#5
+        'question': 'Какой жанр у игры «Overwatch»?',
+        'options': ['MOBA', 'Шутер от первого лица (FPS)', 'Тактический шутер', 'Battle Royale'],
+        'correct_option': 1
+    },
+    {#6
+        'question': 'Кто главный антагонист в «The Legend of Zelda: Ocarina of Time»?',
+        'options': ['Зангиф', 'Ганондорф', 'Валга', 'Демиз'],
+        'correct_option': 1
+    },
+    {#7
+        'question': 'Какая игра установила рекорд по одновременным игрокам в Steam?',
+        'options': ['Dota 2', 'Counter-Strike 2', 'PUBG', 'Cyberpunk 2077'],
+        'correct_option': 2
+    },
+    {#8
+        'question': 'В какой игре есть фраза: «Победа или смерть!»?',
+        'options': ['World of Warcraft', 'League of Legends', 'Dota 2', 'Heroes of the Storm'],
+        'correct_option': 0
+    },
+    {#9
+        'question': 'Как зовут главного героя «The Witcher 3»?',
+        'options': ['Эзо', 'Геральт', 'Лето', 'Сири'],
+        'correct_option': 1
+    },
+    {#10
+        'question': 'Какая игра выиграла «Игру года» на The Game Awards 2023?',
+        'options': ['Elden Ring', 'Baldur’s Gate 3', 'The Legend of Zelda: Tears of the Kingdom', 'Starfield'],
+        'correct_option': 1
+    }
+]
